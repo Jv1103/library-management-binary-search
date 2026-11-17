@@ -1,0 +1,6 @@
+101|Data Structures Using C|Reema Thareja|3|3
+105|Introduction to Algorithms|Thomas H. Cormen|2|2
+110|The C Programming Language|Kernighan and Ritchie|4|4
+120|Let Us C|Yashavant Kanetkar|5|5
+130|Digital Design|M. Morris Mano|2|2
+140|Database System Concepts|Silberschatz|3|3
