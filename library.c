@@ -1,12 +1,3 @@
-/*
- * Library Management System using Binary Search
- * Subject : Data Structures (CIC-209)
- *
- * Books are kept in an array that is ALWAYS sorted by Book ID.
- * Binary search is used for: search, insert position, delete, issue, return.
- * Title search uses a second sorted view (array of pointers sorted by title)
- * and a binary search for the first title matching a prefix.
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,16 +11,13 @@ typedef struct {
     int  id;
     char title[60];
     char author[40];
-    int  total;      /* copies owned by library   */
-    int  available;  /* copies currently on shelf */
+    int  total;      
+    int  available;  
 } Book;
 
-static Book lib[MAX_BOOKS];   /* sorted by id */
+static Book lib[MAX_BOOKS];   
 static int  count = 0;
 
-/* ---------- helpers ---------- */
-
-/* case-insensitive compare of first n chars (n < 0 => whole string) */
 static int icmpn(const char *a, const char *b, int n) {
     int i = 0;
     while ((n < 0 || i < n) && *a && *b) {
@@ -63,9 +51,8 @@ static void printBook(const Book *b) {
            b->id, b->title, b->author, b->total, b->available);
 }
 
-/* ---------- binary search core ---------- */
 
-/* Returns index of book with given id, or -1.  O(log n) */
+
 static int binarySearchById(int id) {
     int lo = 0, hi = count - 1;
     while (lo <= hi) {
@@ -77,7 +64,7 @@ static int binarySearchById(int id) {
     return -1;
 }
 
-/* Returns first index whose id >= given id (insertion point). O(log n) */
+
 static int lowerBound(int id) {
     int lo = 0, hi = count;
     while (lo < hi) {
@@ -88,14 +75,12 @@ static int lowerBound(int id) {
     return lo;
 }
 
-/* ---------- operations ---------- */
 
-/* 0 = ok, 1 = duplicate id, 2 = library full */
 static int insertBook(Book b) {
     if (count >= MAX_BOOKS) return 2;
     int pos = lowerBound(b.id);
     if (pos < count && lib[pos].id == b.id) return 1;
-    for (int i = count; i > pos; i--) lib[i] = lib[i - 1];  /* shift right */
+    for (int i = count; i > pos; i--) lib[i] = lib[i - 1];  
     lib[pos] = b;
     count++;
     return 0;
@@ -125,7 +110,7 @@ static void deleteBook(void) {
         printf("Cannot delete: some copies are issued.\n");
         return;
     }
-    for (int i = pos; i < count - 1; i++) lib[i] = lib[i + 1];  /* shift left */
+    for (int i = pos; i < count - 1; i++) lib[i] = lib[i + 1]; 
     count--;
     printf("Book deleted.\n");
 }
@@ -143,7 +128,7 @@ static int cmpTitle(const void *a, const void *b) {
     return icmpn(x->title, y->title, -1);
 }
 
-/* Binary search on a title-sorted index: finds all titles starting with prefix */
+
 static void searchByTitle(void) {
     char prefix[60];
     readLine("Title (or starting letters): ", prefix, sizeof prefix);
@@ -154,7 +139,7 @@ static void searchByTitle(void) {
     for (int i = 0; i < count; i++) idx[i] = &lib[i];
     qsort(idx, count, sizeof idx[0], cmpTitle);
 
-    int lo = 0, hi = count;                    /* lower bound for prefix */
+    int lo = 0, hi = count;                    
     while (lo < hi) {
         int mid = lo + (hi - lo) / 2;
         if (icmpn(idx[mid]->title, prefix, plen) < 0) lo = mid + 1;
@@ -195,7 +180,6 @@ static void displayAll(void) {
     printf("Total titles: %d\n", count);
 }
 
-/* ---------- file storage ---------- */
 
 static void loadFromFile(void) {
     FILE *f = fopen(DATA_FILE, "r");
@@ -203,7 +187,7 @@ static void loadFromFile(void) {
     Book b;
     while (fscanf(f, "%d|%59[^|]|%39[^|]|%d|%d\n",
                   &b.id, b.title, b.author, &b.total, &b.available) == 5)
-        insertBook(b);          /* insertion keeps array sorted */
+        insertBook(b);         
     fclose(f);
 }
 
@@ -216,7 +200,6 @@ static void saveToFile(void) {
     fclose(f);
 }
 
-/* ---------- main ---------- */
 
 int main(void) {
     loadFromFile();
